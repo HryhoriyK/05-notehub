@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchNotes, createNote, deleteNote } from '../../services/noteService';
-import { Note, CreateNoteParams } from '../../types/note';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useFetchNotes } from '../../hooks/useFetchNotes';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createNote, deleteNote } from '../../services/noteService';
+import type { CreateNoteParams } from '../../services/noteService';
 
 import { SearchBox } from '../SearchBox/SearchBox';
 import { Pagination } from '../Pagination/Pagination';
@@ -21,14 +22,7 @@ const App = () => {
   const queryClient = useQueryClient();
   const perPage = 12;
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', currentPage, debouncedSearch],
-    queryFn: () => fetchNotes(currentPage, perPage, debouncedSearch),
-    keepPreviousData: true,
-    onSuccess: (data) => {
-      console.log('Fetched notes:', data);
-    }
-  });
+  const { data, isLoading, isError } = useFetchNotes(currentPage, perPage, debouncedSearch);
 
   const { mutate: addNote } = useMutation({
     mutationFn: createNote,
@@ -59,7 +53,7 @@ const App = () => {
       <header className={css.toolbar}>
         <SearchBox value={search} onChange={setSearch} />
 
-        {data?.totalPages > 1 && (
+        {data?.totalPages && data.totalPages > 1 && (
           <Pagination
             pageCount={data.totalPages}
             currentPage={currentPage}
@@ -72,7 +66,7 @@ const App = () => {
         </button>
       </header>
 
-      {!isLoading && !isError && data?.notes.length > 0 && (
+      {!isLoading && !isError && Array.isArray(data?.notes) && data.notes.length > 0 && (
         <NoteList notes={data.notes} onDelete={handleDeleteNote} />
       )}
 

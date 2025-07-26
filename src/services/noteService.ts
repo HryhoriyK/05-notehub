@@ -30,15 +30,12 @@ export const fetchNotes = async (
   perPage: number,
   search?: string
 ): Promise<FetchNotesResponse> => {
-  const params: Record<string, string | number> = {
-    page,
-    perPage,
-  };
-  if (search) params.search = search;
+  const params = { page, perPage, ...(search ? { search } : {}) };
 
-  const { data } = await axios.get<FetchNotesResponse>('/notes', { params });
-  return data;
+  const res = await axios.get<FetchNotesResponse>('/notes', { params });
+  return res.data;
 };
+
 
 export const createNote = async (
   noteData: CreateNoteParams
