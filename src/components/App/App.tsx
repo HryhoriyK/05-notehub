@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useFetchNotes } from '../../hooks/useFetchNotes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote, deleteNote } from '../../services/noteService';
+import { createNote } from '../../services/noteService';
 import type { CreateNoteParams } from '../../services/noteService';
 
 import { SearchBox } from '../SearchBox/SearchBox';
@@ -33,19 +33,8 @@ const App = () => {
     },
   });
 
-  const { mutate: removeNote } = useMutation({
-    mutationFn: deleteNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-    },
-  });
-
   const handleCreateNote = (values: CreateNoteParams) => {
     addNote(values);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    removeNote(id);
   };
 
   return (
@@ -67,7 +56,7 @@ const App = () => {
       </header>
 
       {!isLoading && !isError && Array.isArray(data?.notes) && data.notes.length > 0 && (
-        <NoteList notes={data.notes} onDelete={handleDeleteNote} />
+        <NoteList notes={data.notes} />
       )}
 
       {isModalOpen && (
