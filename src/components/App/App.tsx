@@ -40,7 +40,13 @@ const App = () => {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox value={search} onChange={setSearch} />
+          <SearchBox
+        value={search}
+        onChange={(value) => {
+          setSearch(value);
+          setCurrentPage(1);
+        }}
+      />
 
         {data?.totalPages && data.totalPages > 1 && (
           <Pagination

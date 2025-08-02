@@ -19,8 +19,8 @@ const initialValues: CreateNoteParams = {
 };
 
 const validationSchema = Yup.object({
-  title: Yup.string().min(3, 'Too short').max(100, 'Too long').required('Required'),
-  content: Yup.string().min(10, 'Too short').required('Required'),
+  title: Yup.string().min(3, 'Too short').max(50, 'Too long').required('Required'),
+  content: Yup.string().max(500, 'Too long'),
   tag: Yup.string().oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping']).required(),
 });
 
